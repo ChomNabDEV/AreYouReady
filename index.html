@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>Caesar Cipher Game!! — Testing ur braves</title>
+    <title>Caesar Cipher Game!! — Prank + Smooth Dodge + Leaderboard</title>
     <style>
       @font-face {
         font-family: "who asks satan";
@@ -27,8 +27,9 @@
         align-items: center;
         justify-content: center;
         height: 100vh;
-        gap: 24px;
-        flex-direction: column;
+      }
+      img {
+        width: 90%;
       }
       a#trigger {
         font-size: 64px;
@@ -37,10 +38,6 @@
         text-decoration: none;
         cursor: pointer;
         user-select: none;
-      }
-      img.logo {
-        width: 200px;
-        filter: drop-shadow(0 0 8px rgba(255, 0, 0, 0.35));
       }
       #video-overlay {
         display: none;
@@ -189,6 +186,12 @@
       }
       .modal-card h3 {
         margin-bottom: 10px;
+      }
+      .center {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        height: 100vh;
       }
       @media (max-width: 420px) {
         a#trigger {
