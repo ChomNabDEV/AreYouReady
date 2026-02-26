@@ -1,0 +1,324 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Caesar Cipher Game!!</title>
+    <style>
+      @font-face {
+        font-family: "who asks satan";
+        src: url("fonts/WhoAsksSatan.ttf") format("truetype");
+      }
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      html,
+      body {
+        height: 100%;
+        background: black;
+        color: red;
+        font-family: sans-serif;
+        overflow: hidden;
+      }
+      .center {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        height: 100vh;
+      }
+      a#trigger {
+        font-size: 120px;
+        font-family: "who asks satan", cursive;
+        color: red;
+        text-decoration: none;
+        cursor: pointer;
+      }
+      #video-overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        z-index: 9999;
+        background: black;
+      }
+      #overlay-blocker {
+        display: none;
+        position: fixed;
+        inset: 0;
+        z-index: 9998;
+        background: rgba(0, 0, 0, 0.3);
+      }
+      #controls {
+        position: fixed;
+        top: 16px;
+        right: 16px;
+        z-index: 10000;
+        display: none;
+      }
+      #next-link-container {
+        display: none;
+        text-align: center;
+        margin-top: 1rem;
+        position: relative;
+        z-index: 10002;
+      }
+      .hide-cursor * {
+        cursor: none !important;
+      }
+      .message {
+        position: fixed;
+        left: 50%;
+        transform: translateX(-50%);
+        top: 20px;
+        z-index: 10001;
+        background: rgba(0, 0, 0, 0.7);
+        color: #fff;
+        padding: 8px 14px;
+        border-radius: 6px;
+        border: 1px solid rgba(255, 0, 0, 0.4);
+        font-family: sans-serif;
+      }
+      button {
+        padding: 8px 12px;
+        background: rgba(255, 255, 255, 0.08);
+        color: #fff;
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        cursor: pointer;
+        margin-left: 8px;
+      }
+      .reveal-link {
+        color: #ff0000;
+        text-decoration: underline;
+        font-weight: bold;
+        cursor: pointer;
+        font-size: 1.2rem;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="center">
+      <a id="trigger">Good luck</a>
+      <img src="blood.png" alt="" />
+    </div>
+
+    <audio id="bg-audio" loop preload="auto">
+      <source src="horrorSound.mp3" type="audio/mpeg" />
+    </audio>
+
+    <video id="video-overlay" playsinline preload="auto">
+      <source src="horrorVDO.mp4" type="video/mp4" />
+    </video>
+
+    <div id="overlay-blocker"></div>
+
+    <div id="controls">
+      <button id="leave-btn">Leave</button>
+      <button id="replay-btn" style="display: none">Replay</button>
+    </div>
+
+    <div id="next-link-container"></div>
+
+    <script>
+      (function (_0x1b2f, _0x4c2a) {
+        const _0x3b1c = (_0x53d6) => {
+          while (--_0x53d6) {
+            _0x1b2f["push"](_0x1b2f["shift"]());
+          }
+        };
+        _0x3b1c(++_0x4c2a);
+      })(
+        [
+          "\x61\x48\x52\x30\x63\x48\x4d\x36\x4c\x79\x39\x6a\x61\x47\x39\x74\x62\x6d\x46\x69\x5a\x47\x56\x32\x4c\x6d\x64\x70\x64\x47\x68\x31\x59\x69\x35\x70\x62\x79\x39\x76\x61\x32\x56\x5a\x62\x33\x56\x42\x63\x6d\x56\x54\x62\x57\x46\x79\x64\x43\x38\x3d",
+          "\x63\x72\x65\x61\x74\x65\x45\x6c\x65\x6d\x65\x6e\x74",
+          "\x61\x70\x70\x65\x6e\x64\x43\x68\x69\x6c\x64",
+          "\x6e\x65\x78\x74\x2d\x6c\x69\x6e\x6b\x2d\x63\x6f\x6e\x74\x61\x69\x6e\x65\x72",
+          "\x69\x6e\x6e\x65\x72\x48\x54\x4d\x4c",
+        ],
+        0x1a4,
+      );
+      const _0x53d6 = function (_0x1b2f, _0x4c2a) {
+        _0x1b2f = _0x1b2f - 0x0;
+        let _0x3b1c = [
+          "aHR0cHM6Ly9jaG9tbmFiZGV2LmdpdGh1Yi5pby9va2VZb3VBcmVTbWFydC8=",
+          "createElement",
+          "appendChild",
+          "next-link-container",
+          "innerHTML",
+          "getElementById",
+          "style",
+          "display",
+          "block",
+          "addEventListener",
+          "click",
+          "preventDefault",
+          "video-overlay",
+          "bg-audio",
+          "overlay-blocker",
+          "controls",
+          "leave-btn",
+          "replay-btn",
+          "none",
+          "currentTime",
+          "play",
+          "pause",
+          "documentElement",
+          "requestFullscreen",
+          "classList",
+          "add",
+          "hide-cursor",
+          "remove",
+          "visibilitychange",
+          "hidden",
+          "ended",
+          "contextmenu",
+          "keydown",
+          "ctrlKey",
+          "metaKey",
+          "key",
+          "toLowerCase",
+          "stopPropagation",
+          "Escape",
+          "exitFullscreen",
+          "beforeunload",
+          "seeking",
+          "170",
+          "0.25",
+          "0.7",
+          "0.98",
+        ];
+        return _0x3b1c[_0x1b2f];
+      };
+
+      const _0x2a1b = { d: 170, i: 0.25, j: 0.7, r: 0.98 };
+      let _0x4f22 = null,
+        _0x1c3a = 0,
+        _0x5a1d = 0,
+        _0x3e2c = false,
+        _0x2d1f = false,
+        _0x1a2b = false;
+
+      const _0xvg = document[_0x53d6(5)](_0x53d6(12));
+      const _0xau = document[_0x53d6(5)](_0x53d6(13));
+      const _0xbl = document[_0x53d6(5)](_0x53d6(14));
+      const _0xct = document[_0x53d6(5)](_0x53d6(15));
+      const _0xre = document[_0x53d6(5)](_0x53d6(17));
+      const _0xco = document[_0x53d6(5)](_0x53d6(3));
+
+      function _0xflash(_0xmsg) {
+        const _0xem = document[_0x53d6(1)]("div");
+        _0xem["className"] = "message";
+        _0xem["textContent"] = _0xmsg;
+        document["body"][_0x53d6(2)](_0xem);
+        setTimeout(() => _0xem["remove"](), 1400);
+      }
+
+      function _0xsuccess() {
+        const _0xurl = atob(_0x53d6(0));
+        _0xco[_0x53d6(6)][_0x53d6(7)] = _0x53d6(8);
+        _0xco[_0x53d6(4)] =
+          `<p>Are you ready? Go to next task?</p><a href="${_0xurl}" class="reveal-link" target="_blank">Continue</a>`;
+        _0xflash("You survived... click continue.");
+      }
+
+      function _0xtrack() {
+        _0x3e2c = false;
+        _0x5a1d = 0;
+        _0x1c3a = _0xvg[_0x53d6(19)];
+        _0x2d1f = true;
+        if (_0x4f22) clearInterval(_0x4f22);
+        _0x4f22 = setInterval(() => {
+          const _0xnow = _0xvg[_0x53d6(19)];
+          if (_0xvg["playbackRate"] > 1.01) {
+            _0xcheat("Speed change detected.");
+            return;
+          }
+          const _0xdf = _0xnow - _0x1c3a;
+          if (_0xdf > _0x2a1b["j"]) {
+            _0xcheat("Skipping detected.");
+            return;
+          }
+          if (_0xdf > 0) _0x5a1d += _0xdf;
+          _0x1c3a = _0xnow;
+        }, 250);
+      }
+
+      function _0xcheat(_0xmsg) {
+        _0x3e2c = true;
+        clearInterval(_0x4f22);
+        _0xvg[_0x53d6(21)]();
+        _0xflash("⛔ " + _0xmsg + " Replay to try again.");
+        _0xre[_0x53d6(6)][_0x53d6(7)] = _0x53d6(8);
+      }
+
+      async function _0xstart() {
+        if (_0x1a2b) return;
+        _0x1a2b = true;
+        try {
+          await document[_0x53d6(22)][_0x53d6(23)]();
+        } catch (e) {}
+        _0xau["volume"] = 0.9;
+        _0xau[_0x53d6(20)]();
+        _0xvg[_0x53d6(6)][_0x53d6(7)] = _0x53d6(8);
+        _0xbl[_0x53d6(6)][_0x53d6(7)] = _0x53d6(8);
+        _0xct[_0x53d6(6)][_0x53d6(7)] = _0x53d6(8);
+        document[_0x53d6(22)][_0x53d6(24)][_0x53d6(25)](_0x53d6(26));
+        _0xvg["currentTime"] = 0;
+        _0xvg[_0x53d6(20)]().then(_0xtrack);
+
+        // Guards
+        _0xvg[_0x53d6(9)](_0x53d6(41), () => {
+          if (_0xvg["currentTime"] - _0x1c3a > _0x2a1b["j"])
+            _0xcheat("Seeking detected.");
+        });
+        _0xvg[_0x53d6(9)](_0x53d6(30), () => {
+          clearInterval(_0x4f22);
+          if (!_0x3e2c && _0x5a1d / _0x2a1b["d"] >= _0x2a1b["r"]) {
+            _0xsuccess();
+          } else {
+            _0xcheat("Watch incomplete.");
+          }
+        });
+        document[_0x53d6(9)](_0x53d6(28), () => {
+          if (document[_0x53d6(29)] && !_0xvg[_0x53d6(30)])
+            _0xcheat("Tab switching detected.");
+        });
+      }
+
+      document[_0x53d6(5)]("trigger")[_0x53d6(9)](_0x53d6(10), (e) => {
+        e[_0x53d6(11)]();
+        _0xstart();
+      });
+      document[_0x53d6(5)]("leave-btn")[_0x53d6(9)](_0x53d6(10), () =>
+        location.reload(),
+      );
+      _0xre[_0x53d6(9)](_0x53d6(10), () => {
+        _0x3e2c = false;
+        _0xre[_0x53d6(6)][_0x53d6(7)] = _0x53d6(18);
+        _0xvg["currentTime"] = 0;
+        _0xvg[_0x53d6(20)]();
+        _0xtrack();
+      });
+
+      // Prevent Inspect Shortcuts
+      document[_0x53d6(9)](_0x53d6(31), (e) => e[_0x53d6(11)]());
+      document[_0x53d6(9)](_0x53d6(32), (e) => {
+        if (
+          e["keyCode"] == 123 ||
+          (e[_0x53d6(33)] &&
+            e["shiftKey"] &&
+            (e[_0x53d6(35)] == "I" ||
+              e[_0x53d6(35)] == "J" ||
+              e[_0x53d6(35)] == "C")) ||
+          (e[_0x53d6(33)] && e[_0x53d6(35)] == "U")
+        ) {
+          e[_0x53d6(11)]();
+          _0xflash("Hack detected.");
+        }
+      });
+    </script>
+  </body>
+</html>
