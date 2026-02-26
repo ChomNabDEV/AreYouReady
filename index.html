@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>Caesar Cipher Game!!</title>
+    <title>Caesar Cipher Game!! — Prank + Smooth Dodge + Leaderboard</title>
     <style>
       @font-face {
         font-family: "who asks satan";
@@ -17,23 +17,30 @@
       html,
       body {
         height: 100%;
-        background: black;
-        color: red;
+        background: #000;
+        color: #ff0000;
         font-family: sans-serif;
         overflow: hidden;
       }
       .center {
         display: flex;
         align-items: center;
-        justify-content: space-between;
+        justify-content: center;
         height: 100vh;
+        gap: 24px;
+        flex-direction: column;
       }
       a#trigger {
-        font-size: 120px;
+        font-size: 64px;
         font-family: "who asks satan", cursive;
-        color: red;
+        color: #ff0000;
         text-decoration: none;
         cursor: pointer;
+        user-select: none;
+      }
+      img.logo {
+        width: 200px;
+        filter: drop-shadow(0 0 8px rgba(255, 0, 0, 0.35));
       }
       #video-overlay {
         display: none;
@@ -59,36 +66,36 @@
         z-index: 10000;
         display: none;
       }
-      #next-link-container {
-        display: none;
-        text-align: center;
-        margin-top: 1rem;
-        position: relative;
-        z-index: 10002;
-      }
-      .hide-cursor * {
-        cursor: none !important;
-      }
       .message {
         position: fixed;
         left: 50%;
         transform: translateX(-50%);
         top: 20px;
         z-index: 10001;
-        background: rgba(0, 0, 0, 0.7);
+        background: rgba(0, 0, 0, 0.75);
         color: #fff;
         padding: 8px 14px;
         border-radius: 6px;
         border: 1px solid rgba(255, 0, 0, 0.4);
         font-family: sans-serif;
+        display: none;
       }
       button {
         padding: 8px 12px;
-        background: rgba(255, 255, 255, 0.08);
+        background: rgba(255, 255, 255, 0.06);
         color: #fff;
         border: 1px solid rgba(255, 255, 255, 0.12);
         cursor: pointer;
-        margin-left: 8px;
+      }
+      #next-link-container {
+        display: none;
+        position: fixed;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        z-index: 10002;
+        text-align: center;
+        gap: 12px;
       }
       .reveal-link {
         color: #ff0000;
@@ -96,228 +103,605 @@
         font-weight: bold;
         cursor: pointer;
         font-size: 1.2rem;
+        padding: 10px 14px;
+        background: rgba(0, 0, 0, 0.6);
+        border-radius: 6px;
+        border: 1px solid rgba(255, 0, 0, 0.2);
+        display: inline-block;
+      }
+      .prank-area {
+        width: 100vw;
+        height: 100vh;
+        position: fixed;
+        inset: 0;
+        z-index: 10003;
+        pointer-events: none;
+      }
+      .button-wrapper {
+        position: absolute;
+        pointer-events: auto;
+        transition:
+          left 300ms cubic-bezier(0.22, 0.9, 0.2, 1),
+          top 300ms cubic-bezier(0.22, 0.9, 0.2, 1);
+      }
+      .prank-btn {
+        position: relative;
+        padding: 8px 14px;
+        border-radius: 8px;
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        background: rgba(255, 0, 0, 0.05);
+        color: #fff;
+        cursor: pointer;
+        user-select: none;
+      }
+      .hide-cursor * {
+        cursor: none !important;
+      }
+      #attempts-badge {
+        position: fixed;
+        left: 16px;
+        top: 16px;
+        background: rgba(0, 0, 0, 0.7);
+        color: #fff;
+        padding: 6px 10px;
+        border-radius: 6px;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        z-index: 10004;
+      }
+      #leaderboard {
+        position: fixed;
+        right: 16px;
+        top: 16px;
+        background: rgba(0, 0, 0, 0.85);
+        color: #fff;
+        padding: 10px 12px;
+        border-radius: 8px;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        z-index: 10004;
+        max-width: 320px;
+      }
+      #leaderboard h4 {
+        margin-bottom: 8px;
+        font-size: 14px;
+      }
+      #leaderboard ul {
+        list-style: none;
+        padding-left: 0;
+        max-height: 220px;
+        overflow: auto;
+      }
+      #overlay-modal {
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.7);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        z-index: 10005;
+      }
+      .modal-card {
+        background: #0b0b0b;
+        padding: 18px;
+        border-radius: 10px;
+        border: 1px solid rgba(255, 0, 0, 0.12);
+        min-width: 280px;
+        color: #fff;
+      }
+      .modal-card h3 {
+        margin-bottom: 10px;
+      }
+      @media (max-width: 420px) {
+        a#trigger {
+          font-size: 40px;
+        }
       }
     </style>
   </head>
   <body>
-    <div class="center">
+    <div class="center" id="start-screen">
       <a id="trigger">Good luck</a>
-      <img src="blood.png" alt="" />
+      <img class="logo" src="blood.png" alt="logo" />
     </div>
 
     <audio id="bg-audio" loop preload="auto">
       <source src="horrorSound.mp3" type="audio/mpeg" />
     </audio>
-
     <video id="video-overlay" playsinline preload="auto">
       <source src="./horrorVDO.MP4" type="video/mp4" />
+      Your browser does not support the video tag.
     </video>
-
     <div id="overlay-blocker"></div>
-
     <div id="controls">
       <button id="replay-btn" style="display: none">Replay</button>
     </div>
-
+    <div class="message" id="message-box"></div>
     <div id="next-link-container"></div>
+    <div class="prank-area" id="prank-area" aria-hidden="true"></div>
+    <div id="attempts-badge" style="display: none">
+      Attempts: <span id="attempts-count">0</span>
+    </div>
+    <div id="leaderboard" style="display: none">
+      <h4>Leaderboard (least attempts)</h4>
+      <ul id="lb-list"></ul>
+    </div>
+
+    <div id="overlay-modal">
+      <div class="modal-card" id="modal-card">
+        <h3 id="modal-title"></h3>
+        <div id="modal-body"></div>
+        <div style="margin-top: 12px; text-align: right">
+          <button id="modal-close">Close</button>
+        </div>
+      </div>
+    </div>
 
     <script>
-      (function (_0x1b2f, _0x4c2a) {
-        const _0x3b1c = (_0x53d6) => {
-          while (--_0x53d6) {
-            _0x1b2f["push"](_0x1b2f["shift"]());
-          }
-        };
-        _0x3b1c(++_0x4c2a);
-      })(
-        [
-          "\x61\x48\x52\x30\x63\x48\x4d\x36\x4c\x79\x39\x6a\x61\x47\x39\x74\x62\x6d\x46\x69\x5a\x47\x56\x32\x4c\x6d\x64\x70\x64\x47\x68\x31\x59\x69\x35\x70\x62\x79\x39\x76\x61\x32\x56\x5a\x62\x33\x56\x42\x63\x6d\x56\x54\x62\x57\x46\x79\x64\x43\x38\x3d",
-          "\x63\x72\x65\x61\x74\x65\x45\x6c\x65\x6d\x65\x6e\x74",
-          "\x61\x70\x70\x65\x6e\x64\x43\x68\x69\x6c\x64",
-          "\x6e\x65\x78\x74\x2d\x6c\x69\x6e\x6b\x2d\x63\x6f\x6e\x74\x61\x69\x6e\x65\x72",
-          "\x69\x6e\x6e\x65\x72\x48\x54\x4d\x4c",
-        ],
-        0x1a4,
-      );
-      const _0x53d6 = function (_0x1b2f, _0x4c2a) {
-        _0x1b2f = _0x1b2f - 0x0;
-        let _0x3b1c = [
-          "aHR0cHM6Ly9jaG9tbmFiZGV2LmdpdGh1Yi5pby9va2VZb3VBcmVTbWFydC8=",
-          "createElement",
-          "appendChild",
-          "next-link-container",
-          "innerHTML",
-          "getElementById",
-          "style",
-          "display",
-          "block",
-          "addEventListener",
-          "click",
-          "preventDefault",
-          "video-overlay",
-          "bg-audio",
-          "overlay-blocker",
-          "controls",
-          "leave-btn",
-          "replay-btn",
-          "none",
-          "currentTime",
-          "play",
-          "pause",
-          "documentElement",
-          "requestFullscreen",
-          "classList",
-          "add",
-          "hide-cursor",
-          "remove",
-          "visibilitychange",
-          "hidden",
-          "ended",
-          "contextmenu",
-          "keydown",
-          "ctrlKey",
-          "metaKey",
-          "key",
-          "toLowerCase",
-          "stopPropagation",
-          "Escape",
-          "exitFullscreen",
-          "beforeunload",
-          "seeking",
-          "170",
-          "0.25",
-          "0.7",
-          "0.98",
-        ];
-        return _0x3b1c[_0x1b2f];
+      /* CONFIG */
+      const NEXT_URL = "https://chomnabdev.github.io/nextTask"; // change if needed
+      const LINK_DELAY_MS = 2000;
+      const REQUIRED_WATCHED_RATIO = 0.98;
+      const MOVE_INTERVAL_MS = 1800;
+      const NUM_DECOYS = 5;
+      const DODGE_RADIUS = 140; // px distance where dodge starts
+      const DODGE_STRENGTH = 220; // how far it moves away when cursor close
+
+      /* ELEMENTS */
+      const trigger = document.getElementById("trigger");
+      const video = document.getElementById("video-overlay");
+      const audio = document.getElementById("bg-audio");
+      const overlayBlocker = document.getElementById("overlay-blocker");
+      const nextContainer = document.getElementById("next-link-container");
+      const replayBtn = document.getElementById("replay-btn");
+      const messageBox = document.getElementById("message-box");
+      const prankArea = document.getElementById("prank-area");
+      const startScreen = document.getElementById("start-screen");
+      const attemptsBadge = document.getElementById("attempts-badge");
+      const attemptsCountEl = document.getElementById("attempts-count");
+      const leaderboardEl = document.getElementById("leaderboard");
+      const lbList = document.getElementById("lb-list");
+      const overlayModal = document.getElementById("overlay-modal");
+      const modalTitle = document.getElementById("modal-title");
+      const modalBody = document.getElementById("modal-body");
+      const modalClose = document.getElementById("modal-close");
+
+      /* STATE */
+      let watcherTimer = null;
+      let lastTime = 0;
+      let accumulated = 0;
+      let cheated = false;
+      let tracking = false;
+      let moveInterval = null;
+      let targetWrapper = null;
+      let attempts = 0;
+      let gameLocked = false; // locked after a miss
+
+      const guards = {
+        allowPlaybackRateTolerance: 1.01,
+        seekThresholdSec: 0.7,
       };
 
-      const _0x2a1b = { d: 170, i: 0.25, j: 0.7, r: 0.98 };
-      let _0x4f22 = null,
-        _0x1c3a = 0,
-        _0x5a1d = 0,
-        _0x3e2c = false,
-        _0x2d1f = false,
-        _0x1a2b = false;
-
-      const _0xvg = document[_0x53d6(5)](_0x53d6(12));
-      const _0xau = document[_0x53d6(5)](_0x53d6(13));
-      const _0xbl = document[_0x53d6(5)](_0x53d6(14));
-      const _0xct = document[_0x53d6(5)](_0x53d6(15));
-      const _0xre = document[_0x53d6(5)](_0x53d6(17));
-      const _0xco = document[_0x53d6(5)](_0x53d6(3));
-
-      function _0xflash(_0xmsg) {
-        const _0xem = document[_0x53d6(1)]("div");
-        _0xem["className"] = "message";
-        _0xem["textContent"] = _0xmsg;
-        document["body"][_0x53d6(2)](_0xem);
-        setTimeout(() => _0xem["remove"](), 1400);
+      /* UTIL */
+      function flash(msg, ms = 1400) {
+        messageBox.textContent = msg;
+        messageBox.style.display = "block";
+        clearTimeout(messageBox._hideTO);
+        messageBox._hideTO = setTimeout(
+          () => (messageBox.style.display = "none"),
+          ms,
+        );
+      }
+      function showOverlayUI() {
+        video.style.display = "block";
+        overlayBlocker.style.display = "block";
+        document.getElementById("controls").style.display = "block";
+        startScreen.style.display = "none";
+        document.documentElement.classList.add("hide-cursor");
+      }
+      function hideOverlayUI() {
+        video.style.display = "none";
+        overlayBlocker.style.display = "none";
+        document.getElementById("controls").style.display = "none";
+        startScreen.style.display = "flex";
+        document.documentElement.classList.remove("hide-cursor");
+      }
+      function pauseMedia() {
+        try {
+          video.pause();
+        } catch (e) {}
+        try {
+          audio.pause();
+        } catch (e) {}
       }
 
-      function _0xsuccess() {
-        const _0xurl = atob(_0x53d6(0));
-        _0xco[_0x53d6(6)][_0x53d6(7)] = _0x53d6(8);
-        _0xco[_0x53d6(4)] =
-          `<p>Are you ready? Go to next task?</p><a href="${_0xurl}" class="reveal-link" target="_blank">Continue</a>`;
-        _0xflash("You survived... click continue.");
+      function saveToLeaderboard(entry) {
+        try {
+          const key = "prank_leaderboard_v1";
+          const raw = localStorage.getItem(key);
+          const arr = raw ? JSON.parse(raw) : [];
+          arr.push(entry);
+          // sort ascending by attempts
+          arr.sort(
+            (a, b) =>
+              a.attempts - b.attempts || new Date(a.date) - new Date(b.date),
+          );
+          const top = arr.slice(0, 10);
+          localStorage.setItem(key, JSON.stringify(top));
+          return top;
+        } catch (e) {
+          return [];
+        }
       }
 
-      function _0xtrack() {
-        _0x3e2c = false;
-        _0x5a1d = 0;
-        _0x1c3a = _0xvg[_0x53d6(19)];
-        _0x2d1f = true;
-        if (_0x4f22) clearInterval(_0x4f22);
-        _0x4f22 = setInterval(() => {
-          const _0xnow = _0xvg[_0x53d6(19)];
-          if (_0xvg["playbackRate"] > 1.01) {
-            _0xcheat("Speed change detected.");
+      function readLeaderboard() {
+        try {
+          const key = "prank_leaderboard_v1";
+          const r = localStorage.getItem(key);
+          return r ? JSON.parse(r) : [];
+        } catch (e) {
+          return [];
+        }
+      }
+
+      function renderLeaderboard() {
+        const list = readLeaderboard();
+        lbList.innerHTML = "";
+        if (list.length === 0) {
+          lbList.innerHTML = '<li style="color:#ccc">No entries yet</li>';
+        } else {
+          list.forEach((it, idx) => {
+            const li = document.createElement("li");
+            li.textContent = `${idx + 1}. ${it.attempts} attempt(s) — ${new Date(it.date).toLocaleString()}`;
+            lbList.appendChild(li);
+          });
+        }
+        leaderboardEl.style.display = "block";
+      }
+
+      /* TRACKING */
+      function startTracking() {
+        cheated = false;
+        accumulated = 0;
+        lastTime = video.currentTime || 0;
+        tracking = true;
+        if (watcherTimer) clearInterval(watcherTimer);
+        watcherTimer = setInterval(() => {
+          if (!tracking) return;
+          const now = video.currentTime;
+          if (video.playbackRate > guards.allowPlaybackRateTolerance) {
+            markMiss("Speed change detected.");
             return;
           }
-          const _0xdf = _0xnow - _0x1c3a;
-          if (_0xdf > _0x2a1b["j"]) {
-            _0xcheat("Skipping detected.");
+          const delta = now - lastTime;
+          if (
+            Math.abs(delta) > guards.seekThresholdSec &&
+            Math.abs(delta) > 0.5
+          ) {
+            markMiss("Seeking detected.");
             return;
           }
-          if (_0xdf > 0) _0x5a1d += _0xdf;
-          _0x1c3a = _0xnow;
+          if (delta > 0) accumulated += delta;
+          lastTime = now;
         }, 250);
       }
-
-      function _0xcheat(_0xmsg) {
-        _0x3e2c = true;
-        clearInterval(_0x4f22);
-        _0xvg[_0x53d6(21)]();
-        _0xflash("⛔ " + _0xmsg + " Replay to try again.");
-        _0xre[_0x53d6(6)][_0x53d6(7)] = _0x53d6(8);
+      function stopTracking() {
+        tracking = false;
+        if (watcherTimer) {
+          clearInterval(watcherTimer);
+          watcherTimer = null;
+        }
       }
 
-      async function _0xstart() {
-        if (_0x1a2b) return;
-        _0x1a2b = true;
-        try {
-          await document[_0x53d6(22)][_0x53d6(23)]();
-        } catch (e) {}
-        _0xau["volume"] = 0.9;
-        _0xau[_0x53d6(20)]();
-        _0xvg[_0x53d6(6)][_0x53d6(7)] = _0x53d6(8);
-        _0xbl[_0x53d6(6)][_0x53d6(7)] = _0x53d6(8);
-        _0xct[_0x53d6(6)][_0x53d6(7)] = _0x53d6(8);
-        document[_0x53d6(22)][_0x53d6(24)][_0x53d6(25)](_0x53d6(26));
-        _0xvg["currentTime"] = 0;
-        _0xvg[_0x53d6(20)]().then(_0xtrack);
+      /* MISS / WIN HANDLING */
+      function markMiss(reason) {
+        if (gameLocked) return;
+        gameLocked = true;
+        stopTracking();
+        pauseMedia();
+        flash("⛔ " + reason + " You missed. Refresh page to try again.", 6000); // explicit alert per user request
+        // also show alert to user telling them to refresh
+        setTimeout(() => {
+          try {
+            alert("You missed — please REFRESH the page to try again.");
+          } catch (e) {}
+        }, 200);
+        // disable prank area interactions
+        prankArea.style.pointerEvents = "none";
+        replayBtn.style.display = "inline-block";
+        replayBtn.onclick = () => location.reload();
+      }
 
-        // Guards
-        _0xvg[_0x53d6(9)](_0x53d6(41), () => {
-          if (_0xvg["currentTime"] - _0x1c3a > _0x2a1b["j"])
-            _0xcheat("Seeking detected.");
+      function markWin() {
+        stopTracking();
+        pauseMedia();
+        attempts++;
+        attemptsCountEl.textContent = attempts;
+        flash("You survived... saving score and opening next step");
+        const entry = { attempts: attempts, date: new Date().toISOString() };
+        const updated = saveToLeaderboard(entry); // show result modal and leaderboard
+        setTimeout(() => {
+          showResultModal(true, entry, updated);
+          window.open(NEXT_URL, "_blank");
+        }, LINK_DELAY_MS);
+      }
+
+      /* PRANK BUTTONS */
+      function placeAt(el, x, y) {
+        el.style.left = x + "px";
+        el.style.top = y + "px";
+      }
+      function clamp(v, min, max) {
+        return Math.max(min, Math.min(max, v));
+      }
+
+      function placeRandomly(el) {
+        const area = prankArea.getBoundingClientRect();
+        const margin = 18;
+        const maxW = Math.max(50, area.width - margin * 2);
+        const maxH = Math.max(50, area.height - margin * 2);
+        const w = Math.max(60, Math.round(Math.random() * 120));
+        const h = 36;
+        const x = Math.floor(Math.random() * (maxW - w)) + margin;
+        const y = Math.floor(Math.random() * (maxH - h)) + margin;
+        el.style.width = w + "px";
+        placeAt(el, x, y);
+      }
+
+      function createDecoys(count) {
+        prankArea.innerHTML = "";
+        const decoys = [];
+        for (let i = 0; i < count; i++) {
+          const wrapper = document.createElement("div");
+          wrapper.className = "button-wrapper";
+          const btn = document.createElement("button");
+          btn.className = "prank-btn";
+          btn.textContent = ["Nope", "Try again", "Not me", "Wrong", "Miss"][
+            i % 5
+          ];
+          btn.onclick = (e) => {
+            if (gameLocked) return;
+            e.stopPropagation();
+            e.preventDefault();
+            attempts++;
+            attemptsCountEl.textContent = attempts;
+            flash("Wrong button — you lost. Refresh required.");
+            markMiss("Decoy clicked.");
+          };
+          wrapper.appendChild(btn);
+          prankArea.appendChild(wrapper);
+          placeRandomly(wrapper);
+          decoys.push(wrapper);
+        }
+        return decoys;
+      }
+
+      function createTarget() {
+        const wrapper = document.createElement("div");
+        wrapper.className = "button-wrapper";
+        targetWrapper = wrapper;
+        const btn = document.createElement("button");
+        btn.className = "prank-btn";
+        btn.textContent = "Continue";
+        btn.addEventListener("click", (e) => {
+          if (gameLocked) return;
+          e.stopPropagation();
+          attempts++;
+          attemptsCountEl.textContent = attempts; // success
+          // finalize: save and open next
+          markWin();
         });
-        _0xvg[_0x53d6(9)](_0x53d6(30), () => {
-          clearInterval(_0x4f22);
-          if (!_0x3e2c && _0x5a1d / _0x2a1b["d"] >= _0x2a1b["r"]) {
-            _0xsuccess();
+        wrapper.appendChild(btn);
+        prankArea.appendChild(wrapper);
+        placeRandomly(wrapper);
+        return wrapper;
+      }
+
+      // smooth dodge: listens for mousemove and moves the target away smoothly using transitions
+      function enableSmoothDodge() {
+        let area = prankArea.getBoundingClientRect();
+        function onMove(e) {
+          if (!targetWrapper || gameLocked) return;
+          const rect = targetWrapper.getBoundingClientRect();
+          const twCenterX = rect.left + rect.width / 2;
+          const twCenterY = rect.top + rect.height / 2;
+          const cx = e.clientX;
+          const cy = e.clientY;
+          const dx = twCenterX - cx;
+          const dy = twCenterY - cy;
+          const dist = Math.hypot(dx, dy);
+          if (dist < DODGE_RADIUS) {
+            // compute escape vector (away from cursor)
+            const awayX = dx / (dist || 1);
+            const awayY = dy / (dist || 1);
+            // move target proportionally so it appears to dodge smoothly
+            const push = (1 - dist / DODGE_RADIUS) * DODGE_STRENGTH;
+            const newCenterX = twCenterX + awayX * push;
+            const newCenterY = twCenterY + awayY * push;
+            // convert to top-left and clamp to area
+            const wrapperW = rect.width;
+            const wrapperH = rect.height;
+            const areaRect = prankArea.getBoundingClientRect();
+            let newLeft = newCenterX - wrapperW / 2 - areaRect.left;
+            let newTop = newCenterY - wrapperH / 2 - areaRect.top;
+            const margin = 14;
+            newLeft = clamp(
+              newLeft,
+              margin,
+              areaRect.width - wrapperW - margin,
+            );
+            newTop = clamp(newTop, margin, areaRect.height - wrapperH - margin);
+            // apply new pos
+            placeAt(targetWrapper, Math.round(newLeft), Math.round(newTop));
+          }
+        }
+        // listen globally while prank area is active
+        window.addEventListener("mousemove", onMove, { passive: true });
+        window.addEventListener(
+          "touchmove",
+          (ev) => {
+            if (ev.touches && ev.touches[0]) onMove(ev.touches[0]);
+          },
+          { passive: true },
+        );
+      }
+
+      function startPrankMovement() {
+        // random teleports to keep pressure
+        moveInterval = setInterval(() => {
+          const wrappers = Array.from(prankArea.children);
+          if (wrappers.length === 0) return;
+          const idx = Math.floor(Math.random() * wrappers.length);
+          const w = wrappers[idx];
+          placeRandomly(w);
+          if (Math.random() > 0.6) {
+            const other = wrappers[Math.floor(Math.random() * wrappers.length)];
+            placeRandomly(other);
+          }
+        }, MOVE_INTERVAL_MS);
+      }
+      function stopPrankMovement() {
+        if (moveInterval) {
+          clearInterval(moveInterval);
+          moveInterval = null;
+        }
+      }
+
+      function showNextLink() {
+        nextContainer.style.display = "block";
+        nextContainer.innerHTML = `<p style="color:#fff;margin-bottom:12px">Are you ready? Go to next task?</p>
+      <a class="reveal-link" id="final-link" href="${NEXT_URL}" target="_blank" rel="noopener noreferrer">Continue</a>
+      <div style="margin-top:8px;"><small style="color:#ddd">(Fallback link. The moving button is the real challenge.)</small></div>`;
+        prankArea.style.pointerEvents = "auto";
+        createDecoys(NUM_DECOYS);
+        createTarget();
+        enableSmoothDodge();
+        startPrankMovement();
+        attemptsBadge.style.display = "block";
+        leaderboardEl.style.display = "block";
+        renderLeaderboard();
+      }
+
+      /* START FLOW */
+      async function startPlaybackSequence() {
+        if (tracking) return;
+        showOverlayUI();
+        try {
+          if (document.documentElement.requestFullscreen)
+            await document.documentElement.requestFullscreen();
+        } catch (e) {}
+        try {
+          audio.volume = 0.9;
+          audio.currentTime = 0;
+          await audio.play();
+        } catch (e) {}
+        video.currentTime = 0;
+        try {
+          await video.play();
+          startTracking();
+        } catch (e) {
+          flash("Playback blocked — interact to play");
+        }
+
+        video.addEventListener("ratechange", () => {
+          if (video.playbackRate > guards.allowPlaybackRateTolerance)
+            markMiss("Speed change detected.");
+        });
+        document.addEventListener("visibilitychange", () => {
+          if (document.hidden && !video.paused)
+            markMiss("Tab switching detected.");
+        });
+        video.addEventListener("ended", () => {
+          stopTracking();
+          const needed = video.duration * REQUIRED_WATCHED_RATIO;
+          if (!isFinite(video.duration)) {
+            markMiss("Video not playable correctly.");
+            return;
+          }
+          if (!cheated && accumulated >= needed) {
+            flash("You survived... continuing shortly.");
+            setTimeout(() => showNextLink(), LINK_DELAY_MS);
           } else {
-            _0xcheat("Watch incomplete.");
+            markMiss("Watch incomplete.");
           }
         });
-        document[_0x53d6(9)](_0x53d6(28), () => {
-          if (document[_0x53d6(29)] && !_0xvg[_0x53d6(30)])
-            _0xcheat("Tab switching detected.");
+        video.addEventListener("seeking", () => {
+          const now = video.currentTime;
+          if (Math.abs(now - lastTime) > guards.seekThresholdSec)
+            markMiss("Seeking detected.");
         });
       }
 
-      document[_0x53d6(5)]("trigger")[_0x53d6(9)](_0x53d6(10), (e) => {
-        e[_0x53d6(11)]();
-        _0xstart();
-      });
-      document[_0x53d6(5)]("leave-btn")[_0x53d6(9)](_0x53d6(10), () =>
-        location.reload(),
-      );
-      _0xre[_0x53d6(9)](_0x53d6(10), () => {
-        _0x3e2c = false;
-        _0xre[_0x53d6(6)][_0x53d6(7)] = _0x53d6(18);
-        _0xvg["currentTime"] = 0;
-        _0xvg[_0x53d6(20)]();
-        _0xtrack();
+      /* MODAL */
+      function showResultModal(isWin, entry, leaderboard) {
+        overlayModal.style.display = "flex";
+        modalTitle.textContent = isWin ? "Success!" : "Result";
+        modalBody.innerHTML = "";
+        if (isWin) {
+          modalBody.innerHTML = `<p>You reached the next step in <strong>${entry.attempts}</strong> attempt(s).</p>`;
+        }
+        modalBody.innerHTML += '<h4 style="margin-top:8px">Leaderboard</h4>';
+        const list = leaderboard || readLeaderboard();
+        if (list.length === 0) {
+          modalBody.innerHTML +=
+            '<p style="color:#ccc">No leaderboard entries yet</p>';
+        } else {
+          const ul = document.createElement("ul");
+          ul.style.listStyle = "none";
+          ul.style.paddingLeft = "0";
+          list.forEach((it, idx) => {
+            const li = document.createElement("li");
+            li.style.marginTop = "6px";
+            li.textContent = `${idx + 1}. ${it.attempts} attempt(s) — ${new Date(it.date).toLocaleString()}`;
+            ul.appendChild(li);
+          });
+          modalBody.appendChild(ul);
+        }
+      }
+      modalClose.addEventListener("click", () => {
+        overlayModal.style.display = "none";
       });
 
-      // Prevent Inspect Shortcuts
-      document[_0x53d6(9)](_0x53d6(31), (e) => e[_0x53d6(11)]());
-      document[_0x53d6(9)](_0x53d6(32), (e) => {
-        if (
-          e["keyCode"] == 123 ||
-          (e[_0x53d6(33)] &&
-            e["shiftKey"] &&
-            (e[_0x53d6(35)] == "I" ||
-              e[_0x53d6(35)] == "J" ||
-              e[_0x53d6(35)] == "C")) ||
-          (e[_0x53d6(33)] && e[_0x53d6(35)] == "U")
-        ) {
-          e[_0x53d6(11)]();
-          _0xflash("Hack detected.");
+      /* PREVENT INSPECT / SHORTCUTS */
+      document.addEventListener(
+        "contextmenu",
+        (e) => {
+          e.preventDefault();
+          flash("Hack detected.");
+        },
+        { passive: false },
+      );
+      document.addEventListener(
+        "keydown",
+        (e) => {
+          const forbidden =
+            e.key === "F12" ||
+            (e.ctrlKey &&
+              e.shiftKey &&
+              (e.key === "I" || e.key === "J" || e.key === "C")) ||
+            (e.ctrlKey && e.key.toLowerCase() === "u");
+          if (forbidden) {
+            e.preventDefault();
+            flash("Hack detected.");
+          }
+        },
+        { passive: false },
+      );
+
+      /* TRIGGER */
+      trigger.addEventListener("click", async (ev) => {
+        ev.preventDefault();
+        await startPlaybackSequence();
+      });
+
+      // beforeunload warning if in the middle of the video
+      window.addEventListener("beforeunload", (e) => {
+        if (!video.paused && tracking) {
+          e.preventDefault();
+          e.returnValue = "";
         }
       });
+
+      // initial render leaderboard on page load (if user doesn't play yet)
+      renderLeaderboard();
     </script>
   </body>
 </html>
